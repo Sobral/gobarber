@@ -9,12 +9,12 @@ class App {
     this.routes();
   }
 
-  middleware(){
+  middleware() {
     this.server.use(json());
   }
 
-  routes(){
-    this.server.use(routes)
+  routes() {
+    this.server.use(routes);
   }
 }
 
