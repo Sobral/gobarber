@@ -10,11 +10,10 @@ class App {
   }
 
   middleware(){
-    console.log('Middlewares loaded!')
+    this.server.use(express.json());
   }
 
   routes(){
-    console.log('Routes loaded!')
     this.server.use(routes)
   }
 }
