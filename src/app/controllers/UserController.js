@@ -55,5 +55,18 @@ export default {
 
 
     return response.status(201).send();
-  }
+  },
+  async delete(request, response){
+    const {id} = request.params;
+
+    const user = await User.findOne({ where: { id } });
+
+    if(!user){
+      return response.status(400).json({error: "User not found!"})
+    }
+
+    User.destroy({ where: {id }});
+
+    return response.sendStatus(204);
+  },
 };
