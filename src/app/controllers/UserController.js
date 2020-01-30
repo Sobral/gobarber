@@ -6,18 +6,18 @@ class UserController {
 
       let user = await User.findOne({ where: { email } });
 
-      if(!user){
-
-        user = await User.create({
-            name,
-            email,
-            password_hash: password,
-            provider
-        });
-
+      if(user){
+        return response.status(400).json({error:"User already exist!"});
       }
 
-      return response.json(user);
+      const {id} = await User.create({
+          name,
+          email,
+          password_hash: password,
+          provider
+      });
+
+      return response.status(201).json({id, name, email, provider});
   }
 
   async index(request, response){
