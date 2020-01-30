@@ -1,6 +1,6 @@
 import User from '../models/User';
 
-export default {
+class UserController {
   async store (request, response) {
       const {name, email, password, provider} = request.body;
 
@@ -16,13 +16,13 @@ export default {
       let status = created ? 201 : 200;
 
       return response.status(status).json(user);
-  },
+  }
 
   async index(request, response){
     const users = await User.findAll();
 
     return response.json(users);
-  },
+  }
 
   async show(request, response){
     const {id} = request.params;
@@ -34,7 +34,8 @@ export default {
     }
 
     return response.status(200).json(user);
-  },
+  }
+
   async update(request, response){
     const {id} = request.params;
 
@@ -53,7 +54,8 @@ export default {
 
 
     return response.sendStatus(201);
-  },
+  }
+
   async delete(request, response){
     const {id} = request.params;
 
@@ -66,5 +68,7 @@ export default {
     User.destroy({ where: {id }});
 
     return response.sendStatus(204);
-  },
+  }
 };
+
+export default new UserController();
