@@ -11,17 +11,17 @@ module.exports = {
 
       },
       name:{
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING,
         allowNull: false,
 
       },
       email :{
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING,
         allowNull: false,
         unique: true
       },
       password_hash: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING,
         allowNull: false,
 
       },
