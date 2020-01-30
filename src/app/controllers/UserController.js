@@ -24,5 +24,17 @@ export default {
     const users = await User.findAll();
 
     return response.json(users);
+  },
+
+  async show(request, response){
+    const {id} = request.params;
+
+    const user = await User.findOne({ where: { id } });
+
+    if(!user){
+      return response.status(400).json({error: "User not found!"})
+    }
+
+    return response.json(user);
   }
 };
