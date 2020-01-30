@@ -4,18 +4,20 @@ class UserController {
   async store (request, response) {
       const {name, email, password, provider} = request.body;
 
-      const [user, created] = await User.findOrCreate({
-        where: { email },
-        defaults: {
-          name,
-          email,
-          password_hash: password,
-          provider
-        }
-      });
-      let status = created ? 201 : 200;
+      let user = await User.findOne({ where: { email } });
 
-      return response.status(status).json(user);
+      if(!user){
+
+        user = await User.create({
+            name,
+            email,
+            password_hash: password,
+            provider
+        });
+
+      }
+
+      return response.json(user);
   }
 
   async index(request, response){
@@ -30,7 +32,7 @@ class UserController {
     const user = await User.findOne({ where: { id } });
 
     if(!user){
-      return response.status(404).json({error: "User not found!"})
+      return response.status(400).json({error: "User not found!"})
     }
 
     return response.status(200).json(user);
@@ -42,7 +44,7 @@ class UserController {
     const user = await User.findOne({ where: { id } });
 
     if(!user){
-      return response.status(404).json({error: "User not found!"})
+      return response.status(400).json({error: "User not found!"})
     }
 
     const {name, email, password} = request.body;
@@ -62,7 +64,7 @@ class UserController {
     const user = await User.findOne({ where: { id } });
 
     if(!user){
-      return response.status(404).json({error: "User not found!"})
+      return response.status(400).json({error: "User not found!"})
     }
 
     User.destroy({ where: {id }});
