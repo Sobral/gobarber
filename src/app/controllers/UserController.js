@@ -13,7 +13,7 @@ class UserController {
       const {id} = await User.create({
           name,
           email,
-          password_hash: password,
+          password,
           provider
       });
 
