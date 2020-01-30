@@ -4,20 +4,18 @@ export default {
   async store (request, response) {
       const {name, email, password, provider} = request.body;
 
-      let user = await User.findOne({ where: { email } });
+      const [user, created] = await User.findOrCreate({
+        where: { email },
+        defaults: {
+          name,
+          email,
+          password_hash: password,
+          provider
+        }
+      });
+      let status = created ? 201 : 200;
 
-      if(!user){
-
-        user = await User.create({
-            name,
-            email,
-            password_hash: password,
-            provider
-        });
-
-      }
-
-      return response.json(user);
+      return response.status(status).json(user);
   },
 
   async index(request, response){
@@ -32,10 +30,10 @@ export default {
     const user = await User.findOne({ where: { id } });
 
     if(!user){
-      return response.status(400).json({error: "User not found!"})
+      return response.status(404).json({error: "User not found!"})
     }
 
-    return response.json(user);
+    return response.status(200).json(user);
   },
   async update(request, response){
     const {id} = request.params;
@@ -43,7 +41,7 @@ export default {
     const user = await User.findOne({ where: { id } });
 
     if(!user){
-      return response.status(400).json({error: "User not found!"})
+      return response.status(404).json({error: "User not found!"})
     }
 
     const {name, email, password} = request.body;
@@ -54,7 +52,7 @@ export default {
     });
 
 
-    return response.status(201).send();
+    return response.sendStatus(201);
   },
   async delete(request, response){
     const {id} = request.params;
@@ -62,7 +60,7 @@ export default {
     const user = await User.findOne({ where: { id } });
 
     if(!user){
-      return response.status(400).json({error: "User not found!"})
+      return response.status(404).json({error: "User not found!"})
     }
 
     User.destroy({ where: {id }});
