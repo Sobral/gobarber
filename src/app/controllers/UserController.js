@@ -36,5 +36,24 @@ export default {
     }
 
     return response.json(user);
+  },
+  async update(request, response){
+    const {id} = request.params;
+
+    const user = await User.findOne({ where: { id } });
+
+    if(!user){
+      return response.status(400).json({error: "User not found!"})
+    }
+
+    const {name, email, password} = request.body;
+
+    await User.update(
+      { name, email, password },
+      { where: { id }
+    });
+
+
+    return response.status(201).send();
   }
 };
