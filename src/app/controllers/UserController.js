@@ -39,23 +39,33 @@ class UserController {
   }
 
   async update(request, response){
-    const {id} = request.params;
 
-    const user = await User.findOne({ where: { id } });
+    const id = request.UserID;
 
-    if(!user){
-      return response.status(400).json({error: "User not found!"})
+    const {name, email, password, oldPassword} = request.body;
+
+    /// I wonder if it's possible that user does'nt exist
+    const user = await User.findByPk(id);
+
+    if(email && (email !== user.email)) {
+      const userExist = await User.findOne({where:{email}});
+      if(userExist){
+        return response.status(400).json({error: "User already exist!"});
+      }
     }
 
-    const {name, email, password} = request.body;
+    const passwordMatches = await user.checkPassword(oldPassword);
 
-    await User.update(
+    if(oldPassword && !passwordMatches){
+      return response.status(401).json({error: 'Password does not match!'});
+    }
+
+    const {provider} = await User.update(
       { name, email, password },
       { where: { id }
     });
 
-
-    return response.sendStatus(201);
+    return response.status(201).json({id, name, email, provider});
   }
 
   async delete(request, response){
