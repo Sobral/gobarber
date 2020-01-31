@@ -42,7 +42,7 @@ class UserController {
 
     const id = request.UserID;
 
-    const {name, email, password, oldPassword} = request.body;
+    const {email, oldPassword} = request.body;
 
     /// I wonder if it's possible that user does'nt exist
     const user = await User.findByPk(id);
@@ -60,8 +60,8 @@ class UserController {
       return response.status(401).json({error: 'Password does not match!'});
     }
 
-    const {provider} = await User.update(
-      { name, email, password },
+    const { name, provider} = await User.update(
+      request.body,
       { where: { id }
     });
 
