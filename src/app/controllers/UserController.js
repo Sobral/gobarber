@@ -45,9 +45,22 @@ class UserController {
   }
 
   async show(request, response){
+    const schema = Yup.object().shape({
+      id: Yup.number()
+    });
+
+    const schemaValid = await schema.isValid(request.params);
+
+    if(!schemaValid) {
+      return response.status(401).json({error: "Validation Fails."});
+    }
+
     const {id} = request.params;
 
-    const user = await User.findOne({ where: { id } });
+    const user = await User.findOne({
+      where: { id },
+      attributes: ['id', 'name', 'email', 'provider']
+    });
 
     if(!user){
       return response.status(400).json({error: "User not found!"})
