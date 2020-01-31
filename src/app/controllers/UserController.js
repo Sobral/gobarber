@@ -15,7 +15,7 @@ class UserController {
     const schemaValid = await schema.isValid(request.body);
 
     if(!schemaValid) {
-      return response.status(401).json({error: "Validation Fails."});
+      return response.status(401).json({error: "Validation Fails!"});
     }
 
     const {name, email, password, provider} = request.body;
@@ -52,7 +52,7 @@ class UserController {
     const schemaValid = await schema.isValid(request.params);
 
     if(!schemaValid) {
-      return response.status(401).json({error: "Validation Fails."});
+      return response.status(401).json({error: "Validation Fails!"});
     }
 
     const {id} = request.params;
@@ -71,6 +71,26 @@ class UserController {
 
   async update(request, response){
 
+    const schema = Yup.object().shape({
+      name: Yup.string(),
+      email: Yup.string().email(),
+      oldPassword: Yup.string().min(6),
+      password: Yup.string()
+        .min(6)
+        .when('oldPassword', (oldPassword, field) =>
+          oldPassword ? field.required() : field
+        ),
+      confirmPassword: Yup.string().when('password', (password, field) =>
+        password ? field.required().oneOf([Yup.ref('password')]) : field
+      ),
+    });
+
+    const schemaValid = await schema.isValid(request.body);
+
+    if (!schemaValid) {
+      return response.status(400).json({ error: 'Validation Fails!' });
+    }
+
     const id = request.UserID;
 
     const {email, oldPassword} = request.body;
@@ -85,18 +105,23 @@ class UserController {
       }
     }
 
-    const passwordMatches = await user.checkPassword(oldPassword);
 
-    if(oldPassword && !passwordMatches){
-      return response.status(401).json({error: 'Password does not match!'});
+    if(oldPassword){
+      const passwordMatches = await user.checkPassword(oldPassword);
+
+      if(!passwordMatches){
+        return response.status(401).json({error: 'Password does not match!'});
+      }
     }
 
-    const { name, provider} = await User.update(
-      request.body,
-      { where: { id }
-    });
+    await user.update(request.body);
 
-    return response.status(201).json({id, name, email, provider});
+    return response.status(201).json({
+      id,
+      name: user.name,
+      email: user.email,
+      provider: user.provider
+    });
   }
 
   async delete(request, response){
