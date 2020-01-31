@@ -1,23 +1,39 @@
+import * as Yup from 'yup';
+
 import User from '../models/User';
 
 class UserController {
   async store (request, response) {
-      const {name, email, password, provider} = request.body;
 
-      let user = await User.findOne({ where: { email } });
+    const schema = Yup.object().shape({
+      name: Yup.string().required(),
+      email: Yup.string().email().required(),
+      password:Yup.string().min(6).required(),
+      provider:Yup.boolean().required()
+    });
 
-      if(user){
-        return response.status(400).json({error:"User already exist!"});
-      }
+    const schemaValid = await schema.isValid(request.body);
 
-      const {id} = await User.create({
-          name,
-          email,
-          password,
-          provider
-      });
+    if(!schemaValid) {
+      return response.status(401).json({error: "Validation Fails."});
+    }
 
-      return response.status(201).json({id, name, email, provider});
+    const {name, email, password, provider} = request.body;
+
+    let user = await User.findOne({ where: { email } });
+
+    if(user){
+      return response.status(400).json({error:"User already exist!"});
+    }
+
+    const {id} = await User.create({
+        name,
+        email,
+        password,
+        provider
+    });
+
+    return response.status(201).json({id, name, email, provider});
   }
 
   async index(request, response){
