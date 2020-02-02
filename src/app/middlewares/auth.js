@@ -1,16 +1,16 @@
 import jwt from 'jsonwebtoken';
-import {promisify} from 'util';
+import { promisify } from 'util';
 
 import authConfig from '../../config/auth';
 
 export default async (request, response, next) => {
   const authHeader = request.headers.authorization;
 
-  if(!authHeader){
-    return response.status(401).json({error:"Token not provided."});
+  if (!authHeader) {
+    return response.status(401).json({ error: 'Token not provided.' });
   }
 
-  const [,token] = authHeader.split(' ');
+  const [, token] = authHeader.split(' ');
 
   try {
     const jwtVerifyPromisified = promisify(jwt.verify);
@@ -20,9 +20,7 @@ export default async (request, response, next) => {
     request.UserID = decoded.id;
 
     return next();
-
   } catch (error) {
-    return response.status(401).json({error: "Token invalid."});
+    return response.status(401).json({ error: 'Token invalid.' });
   }
-
-}
+};
