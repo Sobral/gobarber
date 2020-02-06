@@ -6,12 +6,15 @@
   "author": "Luciano Sobral <sobral.luciano@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@sentry/node": "5.12.2",
     "bcryptjs": "^2.4.3",
     "express": "^4.17.1",
+    "express-async-errors": "^3.1.1",
     "jsonwebtoken": "^8.5.1",
     "pg": "^7.18.0",
     "pg-hstore": "^2.3.3",
     "sequelize": "^5.21.3",
+    "youch": "^2.0.10",
     "yup": "^0.28.1"
   },
   "devDependencies": {
