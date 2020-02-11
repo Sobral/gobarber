@@ -12,7 +12,7 @@ class UserController {
       password: Yup.string()
         .min(6)
         .required(),
-      provider: Yup.boolean().required(),
+      provider: Yup.boolean(),
     });
 
     const schemaValid = await schema.isValid(request.body);
