@@ -1,5 +1,4 @@
 import Sequelize, { Model } from 'sequelize';
-import { resolve } from 'path';
 
 class File extends Model {
   static init(sequelize) {
