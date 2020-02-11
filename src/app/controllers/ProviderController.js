@@ -1,4 +1,5 @@
 import User from '../models/User';
+import File from '../models/File';
 
 class ProviderController {
   async index(request, response) {
@@ -6,7 +7,12 @@ class ProviderController {
       where: {
         provider: true,
       },
-      attributes: ['id', 'name', 'email', 'provider'],
+      attributes: ['id', 'name', 'email', 'avatar_id'],
+      include: {
+        model: File,
+        as: 'avatar',
+        attributes: ['path', 'name'],
+      },
     });
 
     return response.status(200).json(users);
