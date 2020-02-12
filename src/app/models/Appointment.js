@@ -1,6 +1,6 @@
 import Sequelize, { Model } from 'sequelize';
 
-class File extends Model {
+class Appointment extends Model {
   static init(sequelize) {
     super.init(
       {
@@ -19,4 +19,4 @@ class File extends Model {
     this.belongsTo(models.User, { foreignKey: 'provider_id', as: 'provider' });
   }
 }
-export default File;
+export default Appointment;
