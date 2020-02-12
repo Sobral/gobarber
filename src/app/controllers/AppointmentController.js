@@ -1,4 +1,5 @@
 import * as Yup from 'yup';
+import { startOfHour, parseISO, isBefore } from 'date-fns';
 import { Op } from 'sequelize';
 import ProviderController from './ProviderController';
 import Appointment from '../models/Appointment';
@@ -17,6 +18,7 @@ class AppointmentController {
     }
 
     const { provider_id, date } = request.body;
+    const hourStart = startOfHour(parseISO(date));
 
     /**
      * Are You busy ??
@@ -26,7 +28,9 @@ class AppointmentController {
     });
 
     if (isUserBusy) {
-      return response.status(401).json({ error: 'User is busy in this date' });
+      return response
+        .status(401)
+        .json({ error: 'User already has a appointment in this date' });
     }
 
     /**
@@ -41,8 +45,15 @@ class AppointmentController {
     /**
      * Checks is provider is available in this date
      */
+
+    if (isBefore(hourStart, new Date())) {
+      return response.status(401).json({ error: 'Past date are now allowed.' });
+    }
+
     const isProviderBusy = await Appointment.findOne({
-      where: { [Op.and]: [{ provider_id }, { date }] },
+      where: {
+        [Op.and]: [{ provider_id }, { date: hourStart }, { canceled_at: null }],
+      },
     });
 
     if (isProviderBusy) {
@@ -53,7 +64,7 @@ class AppointmentController {
 
     const appointment = await Appointment.create({
       provider_id,
-      date,
+      date: hourStart,
       user_id: request.UserID,
     });
 
@@ -62,7 +73,7 @@ class AppointmentController {
 
   async index(request, response) {
     const appointment = await Appointment.findAll({
-      where: { user_id: request.UserID },
+      where: { user_id: request.UserID, canceled_at: null },
       attributes: ['id', 'date', 'provider_id'],
     });
 
