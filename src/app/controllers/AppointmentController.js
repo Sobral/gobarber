@@ -59,6 +59,15 @@ class AppointmentController {
 
     return response.json(appointment);
   }
+
+  async index(request, response) {
+    const appointment = await Appointment.findAll({
+      where: { user_id: request.UserID },
+      attributes: ['id', 'date', 'provider_id'],
+    });
+
+    return response.status(200).json(appointment);
+  }
 }
 
 export default new AppointmentController();
