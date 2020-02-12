@@ -19,6 +19,17 @@ class AppointmentController {
     const { provider_id, date } = request.body;
 
     /**
+     * Are You busy ??
+     */
+    const isUserBusy = await Appointment.findOne({
+      where: { [Op.and]: [{ user_id: request.UserID }, { date }] },
+    });
+
+    if (isUserBusy) {
+      return response.status(401).json({ error: 'User is busy in this date' });
+    }
+
+    /**
      * Check if provider exist
      */
     const provider = await User.findOne({
