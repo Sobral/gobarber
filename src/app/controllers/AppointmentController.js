@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 import { Op } from 'sequelize';
-import User from '../models/User';
+import ProviderController from './ProviderController';
 import Appointment from '../models/Appointment';
 
 class AppointmentController {
@@ -32,11 +32,9 @@ class AppointmentController {
     /**
      * Check if provider exist
      */
-    const provider = await User.findOne({
-      where: { id: provider_id, provider: true },
-    });
+    const existProvider = await ProviderController.providerExist(provider_id);
 
-    if (!provider) {
+    if (!existProvider) {
       return response.status(401).json({ error: 'Provider ID does not exist' });
     }
 

@@ -17,6 +17,15 @@ class ProviderController {
 
     return response.status(200).json(users);
   }
+
+  async providerExist(id) {
+    const provider = await User.findOne({
+      where: { id, provider: true },
+    });
+
+    if (!provider) return false;
+    return true;
+  }
 }
 
 export default new ProviderController();
