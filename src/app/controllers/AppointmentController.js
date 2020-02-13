@@ -3,6 +3,8 @@ import { startOfHour, parseISO, isBefore } from 'date-fns';
 import { Op } from 'sequelize';
 import ProviderController from './ProviderController';
 import Appointment from '../models/Appointment';
+import User from '../models/User';
+import File from '../models/File';
 
 class AppointmentController {
   async store(request, response) {
@@ -74,7 +76,22 @@ class AppointmentController {
   async index(request, response) {
     const appointment = await Appointment.findAll({
       where: { user_id: request.UserID, canceled_at: null },
-      attributes: ['id', 'date', 'provider_id'],
+      order: ['date'],
+      attributes: ['id', 'date'],
+      include: [
+        {
+          model: User,
+          as: 'provider',
+          attributes: ['id', 'name'],
+          include: [
+            {
+              model: File,
+              as: 'avatar',
+              attributes: ['name', 'path', 'url'],
+            },
+          ],
+        },
+      ],
     });
 
     return response.status(200).json(appointment);
