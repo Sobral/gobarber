@@ -9,6 +9,7 @@ import FileController from './app/controllers/FileController';
 import AppointmentController from './app/controllers/AppointmentController';
 import ScheduleController from './app/controllers/ScheduleController';
 import MulterConfig from './config/multer';
+import NotificationController from './app/controllers/NotificationController';
 
 const routes = new Router();
 
@@ -31,4 +32,6 @@ routes.get('/appointments/', AppointmentController.index);
 // Session
 routes.get('/schedules', ScheduleController.index);
 routes.post('/files', upload.single('file'), FileController.store);
+
+routes.get('/notifications', NotificationController.index);
 export default routes;
