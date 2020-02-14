@@ -74,9 +74,13 @@ class AppointmentController {
 
     const user = await User.findOne({ where: { id: request.UserID } });
 
-    const formatDate = format(hourStart, "'dia' dd 'de' MMMM 'às' H:mm", {
-      locale: pt,
-    });
+    const formatDate = format(
+      hourStart,
+      "'dia' dd 'de' MMMM 'de' Y 'às' H:mm",
+      {
+        locale: pt,
+      }
+    );
     await Notification.create({
       content: `Novo agendamento de ${user.name} no ${formatDate}`,
       user: provider_id,
