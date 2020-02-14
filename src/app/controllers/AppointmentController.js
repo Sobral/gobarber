@@ -1,10 +1,12 @@
 import * as Yup from 'yup';
-import { startOfHour, parseISO, isBefore } from 'date-fns';
+import { startOfHour, parseISO, isBefore, format } from 'date-fns';
+import pt from 'date-fns/locale/pt-BR';
 import { Op } from 'sequelize';
 import ProviderController from './ProviderController';
 import Appointment from '../models/Appointment';
 import User from '../models/User';
 import File from '../models/File';
+import Notification from '../schemas/Notification';
 
 class AppointmentController {
   async store(request, response) {
@@ -68,6 +70,16 @@ class AppointmentController {
       provider_id,
       date: hourStart,
       user_id: request.UserID,
+    });
+
+    const user = await User.findOne({ where: { id: request.UserID } });
+
+    const formatDate = format(hourStart, "'dia' dd 'de' MMMM 'às' H:mm", {
+      locale: pt,
+    });
+    await Notification.create({
+      content: `Novo agendamento de ${user.name} no ${formatDate}`,
+      user: provider_id,
     });
 
     return response.json(appointment);
