@@ -26,8 +26,10 @@ routes.put('/users/', UserController.update);
 routes.delete('/users/:id', UserController.delete);
 
 routes.get('/providers/', ProviderController.index);
+
 routes.post('/appointments/', AppointmentController.store);
 routes.get('/appointments/', AppointmentController.index);
+routes.delete('/appointments/:id', AppointmentController.delete);
 
 // Session
 routes.get('/schedules', ScheduleController.index);

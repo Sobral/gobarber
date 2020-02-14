@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import { startOfHour, parseISO, isBefore, format } from 'date-fns';
+import { startOfHour, parseISO, isBefore, format, subHours } from 'date-fns';
 import pt from 'date-fns/locale/pt-BR';
 import { Op } from 'sequelize';
 import ProviderController from './ProviderController';
@@ -116,6 +116,34 @@ class AppointmentController {
     });
 
     return response.status(200).json(appointment);
+  }
+
+  async delete(request, response) {
+    const { id } = request.params;
+
+    const appointment = await Appointment.findByPk(id);
+
+    if (!appointment) {
+      return response
+        .status(401)
+        .json({ error: 'appointment does not exist!' });
+    }
+
+    const now = new Date();
+    const appointmentHourSub = subHours(appointment.date, 2);
+    const hourBeforeAppointment = isBefore(appointmentHourSub, now);
+
+    const diffentUsers = appointment.user_id !== request.UserID;
+
+    if (diffentUsers || hourBeforeAppointment) {
+      return response.status(401).json({
+        error: 'Not enought permission to cancel this appointment',
+      });
+    }
+
+    appointment.canceled_at = now;
+    await appointment.save();
+    return response.json(appointment);
   }
 }
 
