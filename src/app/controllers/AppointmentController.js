@@ -7,6 +7,7 @@ import Appointment from '../models/Appointment';
 import User from '../models/User';
 import File from '../models/File';
 import Notification from '../schemas/Notification';
+import Mail from '../../lib/Mail';
 
 class AppointmentController {
   async store(request, response) {
@@ -121,7 +122,12 @@ class AppointmentController {
   async delete(request, response) {
     const { id } = request.params;
 
-    const appointment = await Appointment.findByPk(id);
+    const appointment = await Appointment.findByPk(id, {
+      include: [
+        { model: User, as: 'provider', attributes: ['name', 'email'] },
+        { model: User, as: 'user', attributes: ['name'] },
+      ],
+    });
 
     if (!appointment) {
       return response
@@ -143,6 +149,21 @@ class AppointmentController {
 
     appointment.canceled_at = now;
     await appointment.save();
+
+    const formatDate = format(
+      appointment.date,
+      "'dia' dd 'de' MMMM 'de' Y 'às' H:mm",
+      {
+        locale: pt,
+      }
+    );
+
+    Mail.sendMail({
+      to: `${appointment.provider.name} <${appointment.provider.email}>`,
+      subject: 'Agendamento Cancelado',
+      text: `${appointment.user.name} cancelou o agendamento no ${formatDate}`,
+    });
+
     return response.json(appointment);
   }
 }
