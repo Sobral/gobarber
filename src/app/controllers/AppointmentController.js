@@ -150,18 +150,19 @@ class AppointmentController {
     appointment.canceled_at = now;
     await appointment.save();
 
-    const formatDate = format(
-      appointment.date,
-      "'dia' dd 'de' MMMM 'de' Y 'às' H:mm",
-      {
-        locale: pt,
-      }
-    );
+    const formatDate = format(appointment.date, 'PPPPpppp', {
+      locale: pt,
+    });
 
     Mail.sendMail({
       to: `${appointment.provider.name} <${appointment.provider.email}>`,
       subject: 'Agendamento Cancelado',
-      text: `${appointment.user.name} cancelou o agendamento no ${formatDate}`,
+      template: 'cancellation',
+      context: {
+        provider: appointment.provider.name,
+        user: appointment.user.name,
+        date: formatDate,
+      },
     });
 
     return response.json(appointment);
