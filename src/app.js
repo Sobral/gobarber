@@ -6,6 +6,7 @@ import Youch from 'youch';
 import routes from './routes';
 import SentryConfig from './config/sentry';
 import './database';
+import 'dotenv/config';
 
 class App {
   constructor() {
@@ -31,12 +32,14 @@ class App {
     this.server.use(Sentry.Handlers.errorHandler());
   }
 
-  async onError(err, req, res, next) {
-    const errors = await Youch(err, req).toJSON();
+  async onError(error, request, response, next) {
+    if (process.env.NODE_ENV === 'development') {
+      const errors = await Youch(error, request).toJSON();
 
-    res.statusCode = 500;
-    return res.json(errors);
-    // res.end(`${res.sentry}\n`);
+      return response.status(500).json(errors);
+      // res.end(`${res.sentry}\n`);}
+    }
+    return response.status(500).json({ error: 'Internal server Error' });
   }
 }
 
