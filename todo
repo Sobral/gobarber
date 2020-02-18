@@ -1,0 +1,11 @@
+# Authorização de rotas
+  - Evitar BOLA
+# Segurança da API
+  - Configuração do express
+  - CORS
+
+# Testes
+  End-to-End
+    > Regressão
+    > Unitários
+    > Mocks ?
