@@ -44,5 +44,8 @@
     "queue:debug": "nodemon --inspect src/queue.js",
     "build": "sucrase ./src -d ./app --transforms imports",
     "fix": "eslint --fix src --ext .js"
+  },
+  "engines": {
+    "yarn": "1.21.1"
   }
 }
