@@ -1,7 +1,7 @@
 {
   "name": "gobarber",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "repository": "git@github.com:Sobral/gobarber.git",
   "author": "Luciano Sobral <sobral.luciano@gmail.com>",
   "license": "MIT",
