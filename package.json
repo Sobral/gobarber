@@ -41,6 +41,8 @@
     "queue": "nodemon src/queue.js",
     "dev:debug": "nodemon --inspect src/server.js",
     "queue:debug": "nodemon --inspect src/queue.js",
-    "fix": "eslint --fix src --ext .js"
+    "build": "sucrase ./src -d ./dist --transforms imports",
+    "fix": "eslint --fix src --ext .js",
+    "start": "node dist/server.js && node dist/queue.js"
   }
 }
