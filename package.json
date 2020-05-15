@@ -43,7 +43,8 @@
     "dev:debug": "nodemon --inspect src/server.js",
     "queue:debug": "nodemon --inspect src/queue.js",
     "build": "sucrase ./src -d ./app --transforms imports",
-    "fix": "eslint --fix src --ext .js"
+    "fix": "eslint --fix src --ext .js",
+    "heroku-postbuild": "npm install --production"
   },
   "engines": {
     "node": "14.1.0",
