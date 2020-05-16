@@ -1,1 +1,1 @@
-web: node app/server.js && node app/queue.js
+web: node server.js && node queue.js
